@@ -2,7 +2,7 @@ var Bot = require("./lib/bot");
 
 var bot = new Bot({
 	apiHost: "https://apis.daum.net", 
-	apiKey: "MYPEOPLE_APIKEY"
+	apiKey: "fe174310b72d52f4ed3406859e7e783d8228d4b4"
 });
 
 exports.buddyTest = function(buddyId, content) {
@@ -45,7 +45,12 @@ exports.sendFromMessage = function(buddyId, content) {
 	bot.buddyProfile(buddyId, function(error, data) {
 		if(!error){
 
-			var reply = data.buddys[0].name + ': ' + content;
+            var reply = data.buddys[0].name + ': ' + content;
+            if(content == "몇시")
+            {
+                var d = new Date();
+                reply = "서버시간 : " + d.toString();
+            }
 			bot.sendMessageToBuddy(buddyId, reply, null, function(error, data) {
 				if(!error){
 					console.log(data);
