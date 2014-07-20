@@ -40,6 +40,19 @@ exports.addBuddy = function(buddyId) {
 
 };
 
+var exec = require('child_process').exec;
+function execute(command, callback){
+    exec(command, function(error, stdout, stderr){ callback(stdout); });
+};
+
+
+if (typeof String.prototype.startsWith != 'function') {
+    // see below for better implementation!
+    String.prototype.startsWith = function (str){
+        return this.indexOf(str) == 0;
+    };
+}
+
 exports.sendFromMessage = function(buddyId, content) {
 
 	bot.buddyProfile(buddyId, function(error, data) {
@@ -51,14 +64,32 @@ exports.sendFromMessage = function(buddyId, content) {
                 var d = new Date();
                 reply = "서버시간 : " + d.toString();
             }
-			bot.sendMessageToBuddy(buddyId, reply, null, function(error, data) {
-				if(!error){
-					console.log(data);
-				}else{
-					console.log(error);
-				}
-			});	
 
+            if(content.startsWith("명령"))
+            {
+                var s = content.substring(3)
+                execute(s, function(s){
+                    reply=s;
+
+                    bot.sendMessageToBuddy(buddyId, reply, null, function(error, data) {
+                        if(!error){
+                            console.log(data);
+                        }else{
+                            console.log(error);
+                        }
+                    });
+                });
+            }
+            else
+            {
+                bot.sendMessageToBuddy(buddyId, reply, null, function(error, data) {
+                    if(!error){
+                        console.log(data);
+                    }else{
+                        console.log(error);
+                    }
+                });
+            }
 		}else{
  			console.log(error);
  		} 
